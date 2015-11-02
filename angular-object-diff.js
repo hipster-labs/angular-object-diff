@@ -17,7 +17,7 @@
 	    /* service methods */
 
 	    /**
-	     * diff between objcet a and b
+	     * diff between object a and b
 		 * @param {Object} a
 		 * @param {Object} b
 		 * @return {Object}
@@ -97,7 +97,7 @@
 	    };
 
 	    /**
-	     * diff between objcet a and b own properties only
+	     * diff between object a and b own properties only
 		 * @param {Object} a
 		 * @param {Object} b
 		 * @return {Object}
