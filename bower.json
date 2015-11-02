@@ -1,0 +1,50 @@
+{
+  "name": "angular-object-diff",
+  "version": "0.1.0",
+  "main": [
+    "./dist/angular-object-diff.js",
+    "./dist/angular-object-diff.css"
+  ],
+  "authors": [
+    "Deepu K Sasidharan <d4udts@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deepu105/angular-object-diff.git"
+  },
+  "description": "An Angular JS plugin to compare and show object differences.",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "angular",
+    "angular.js",
+    "object",
+    "diff",
+    "json",
+    "json-diff",
+    "object-diff",
+    "compare"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "1.x"
+  },
+  "devDependencies": {
+    "angular-bootstrap": "~0.11.0",
+    "font-awesome": "~4.1.0",
+    "rainbow": "~1.1.9",
+    "angular-mocks": "~1.3.10"
+  },
+  "resolutions": {
+    "angular": "1.x",
+    "angular-mocks": "1.3.10"
+  }
+}
