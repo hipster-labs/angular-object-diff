@@ -3,29 +3,58 @@
 
     angular
         .module('ds.objectDiff', [])
-        .factory('ObjectDiff', objectDiff);
+        .factory('ObjectDiff', objectDiff)
+        .filter('toJsonView', toJsonViewFilter)
+        .filter('toJsonDiffView', toJsonDiffViewFilter)
+        .filter('objToJsonView', objToJsonViewFilter);
+
+    toJsonViewFilter.$inject = ['ObjectDiff'];
+    toJsonDiffViewFilter.$inject = ['ObjectDiff'];
+    objToJsonViewFilter.$inject = ['ObjectDiff'];
 
     /* service implementation */
     function objectDiff() {
-        var service = {
-            diff: diff,
-            diffOwnProperties: diffOwnProperties,
-            toJsonView: formatToJsonXMLString,
-            objToJsonView: formatObjToJsonXMLString,
-            toJsonDiffView: formatChangesToXMLString
-        };
+
+        var openChar = '{',
+            closeChar = '}',
+            service = {
+                setOpenChar: setOpenChar,
+                setCloseChar: setCloseChar,
+                diff: diff,
+                diffOwnProperties: diffOwnProperties,
+                toJsonView: formatToJsonXMLString,
+                objToJsonView: formatObjToJsonXMLString,
+                toJsonDiffView: formatChangesToXMLString
+            };
+
         return service;
 
+
         /* service methods */
+
+        /**
+         * @param char
+         */
+        function setOpenChar(char) {
+            openChar = char;
+        }
+
+        /**
+         * @param char
+         */
+        function setCloseChar(char) {
+            closeChar = char;
+        }
 
         /**
          * diff between object a and b
          * @param {Object} a
          * @param {Object} b
+         * @param shallow
          * @param isOwn
          * @return {Object}
          */
-        function diff(a, b, isOwn) {
+        function diff(a, b, shallow, isOwn) {
 
             if (a === b) {
                 return equalObj(a);
@@ -39,7 +68,7 @@
                     if (a[key] === b[key]) {
                         diffValue[key] = equalObj(a[key]);
                     } else {
-                        if (isValidAttr(a[key], b[key])) {
+                        if (!shallow && isValidAttr(a[key], b[key])) {
                             var valueDiff = diff(a[key], b[key], isOwn);
                             if (valueDiff.changed == 'equal') {
                                 diffValue[key] = equalObj(a[key]);
@@ -91,29 +120,31 @@
          * @param {Object} a
          * @param {Object} b
          * @return {Object}
+         * @param deep
          */
-        function diffOwnProperties(a, b) {
-            return diff(a, b, true);
+        function diffOwnProperties(a, b, deep) {
+            return diff(a, b, deep, true);
         }
 
         /**
          * Convert to a readable xml/html Json structure
          * @param {Object} changes
          * @return {string}
+         * @param shallow
          */
-        function formatToJsonXMLString(changes) {
+        function formatToJsonXMLString(changes, shallow) {
             var properties = [];
 
             var diff = changes.value;
             if (changes.changed == 'equal') {
-                return inspect(diff);
+                return inspect(diff, shallow);
             }
 
             for (var key in diff) {
-                properties.push(formatChange(key, diff[key]));
+                properties.push(formatChange(key, diff[key], shallow));
             }
 
-            return '<span>{</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>}</span>';
+            return '<span>' + openChar + '</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>' + openChar + '</span>';
 
         }
 
@@ -121,17 +152,19 @@
          * Convert to a readable xml/html Json structure
          * @return {string}
          * @param obj
+         * @param shallow
          */
-        function formatObjToJsonXMLString(obj) {
-            return inspect(obj);
+        function formatObjToJsonXMLString(obj, shallow) {
+            return inspect(obj, shallow);
         }
 
         /**
          * Convert to a readable xml/html Json structure
          * @param {Object} changes
          * @return {string}
+         * @param shallow
          */
-        function formatChangesToXMLString(changes) {
+        function formatChangesToXMLString(changes, shallow) {
             var properties = [];
 
             if (changes.changed == 'equal') {
@@ -143,10 +176,10 @@
             for (var key in diff) {
                 var changed = diff[key].changed;
                 if (changed !== 'equal')
-                    properties.push(formatChange(key, diff[key], true));
+                    properties.push(formatChange(key, diff[key], shallow, true));
             }
 
-            return '<span>{</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>}</span>';
+            return '<span>' + openChar + '</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>' + closeChar + '</span>';
 
         }
 
@@ -176,8 +209,10 @@
          * @param key
          * @param diffItem
          * @returns {*}
+         * @param shallow
+         * @param diffOnly
          */
-        function formatChange(key, diffItem, diffOnly) {
+        function formatChange(key, diffItem, shallow, diffOnly) {
             var changed = diffItem.changed;
             var property;
             switch (changed) {
@@ -201,7 +236,7 @@
                     break;
 
                 case 'object change':
-                    property = (stringifyObjectKey(key) + '<span>: </span>' + ( diffOnly ? formatChangesToXMLString(diffItem) : formatToJsonXMLString(diffItem)));
+                    property = shallow ? '' : (stringifyObjectKey(key) + '<span>: </span>' + ( diffOnly ? formatChangesToXMLString(diffItem) : formatToJsonXMLString(diffItem)));
                     break;
             }
 
@@ -229,30 +264,36 @@
         /**
          * @param {Object} obj
          * @return {string}
+         * @param shallow
          */
-        function inspect(obj) {
+        function inspect(obj, shallow) {
 
-            return _inspect('', obj);
+            return _inspect('', obj, shallow);
 
             /**
              * @param {string} accumulator
              * @param {object} obj
              * @see http://jsperf.com/continuation-passing-style/3
              * @return {string}
+             * @param shallow
              */
-            function _inspect(accumulator, obj) {
+            function _inspect(accumulator, obj, shallow) {
                 switch (typeof obj) {
                     case 'object':
                         if (!obj) {
                             accumulator += 'null';
                             break;
                         }
+                        if (shallow) {
+                            accumulator += '[object]';
+                            break;
+                        }
                         var keys = Object.keys(obj);
                         var length = keys.length;
                         if (length === 0) {
-                            accumulator += '<span>{}</span>';
+                            accumulator += '<span>' + openChar + closeChar + '</span>';
                         } else {
-                            accumulator += '<span>{</span>\n<div class="diff-level">';
+                            accumulator += '<span>' + openChar + '</span>\n<div class="diff-level">';
                             for (var i = 0; i < length; i++) {
                                 var key = keys[i];
                                 accumulator = _inspect(accumulator + stringifyObjectKey(escapeHTML(key)) + '<span>: </span>', obj[key]);
@@ -260,7 +301,7 @@
                                     accumulator += '<span>,</span>\n';
                                 }
                             }
-                            accumulator += '\n</div><span>}</span>'
+                            accumulator += '\n</div><span>' + closeChar + '</span>'
                         }
                         break;
 
@@ -279,5 +320,24 @@
                 return accumulator;
             }
         }
+    }
+
+    /* filter implementation */
+    function toJsonViewFilter(ObjectDiff) {
+        return function (value) {
+            return ObjectDiff.toJsonView(value);
+        };
+    }
+
+    function toJsonDiffViewFilter(ObjectDiff) {
+        return function (value) {
+            return ObjectDiff.toJsonDiffView(value);
+        };
+    }
+
+    function objToJsonViewFilter(ObjectDiff) {
+        return function (value) {
+            return ObjectDiff.objToJsonView(value);
+        };
     }
 })();
