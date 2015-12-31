@@ -41,24 +41,11 @@
       .pipe(jscs());
   });*/
 
-  /*  gulp.task('unit', shell.task([
-    ' node_modules/mocha-phantomjs/bin/mocha-phantomjs -R spec test/index.html '
-  ]));*/
   gulp.task('unit', function() {
     return gulp
       .src('test/index.html')
       .pipe(mochaPhantomJS());
   });
-  /*  gulp.task('integration', function() {
-    return gulp.src('test/test.integration.js', {
-      read: false
-    })
-      .pipe(mocha({
-        reporter: 'list',
-        timeout: 10000,
-        require: 'test/support/setup.js'
-      }));
-  });*/
 
   gulp.task('bump-patch', bump('patch'));
   gulp.task('bump-minor', bump('minor'));
