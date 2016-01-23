@@ -147,8 +147,9 @@
     gulp.task('default', sequence('check', ['less', 'js'], 'build'));
     gulp.task('test', sequence('unit' /*, 'integration'*/ ));
     gulp.task('check', sequence(['lint' /*, 'style'*/ ], 'test'));
-    gulp.task('deploy-patch', sequence('default', 'bump-patch', /*'update',*/ 'git-commit', 'git-push', 'npm'));
-    gulp.task('deploy-minor', sequence('default', 'bump-minor', /*'update',*/ 'git-commit', 'git-push', 'npm'));
-    gulp.task('deploy-major', sequence('default', 'bump-patch', /*'update',*/ 'git-commit', 'git-push', 'npm'));
+    gulp.task('publish', sequence(['git-commit', 'git-push', 'git-demo', 'npm']));
+    gulp.task('deploy-patch', sequence('default', 'bump-patch', /*'update',*/ 'publish'));
+    gulp.task('deploy-minor', sequence('default', 'bump-minor', /*'update',*/ 'publish'));
+    gulp.task('deploy-major', sequence('default', 'bump-patch', /*'update',*/ 'publish'));
 
 })();
