@@ -150,6 +150,6 @@
     gulp.task('publish', sequence(['git-commit', 'git-push', 'git-demo', 'npm']));
     gulp.task('deploy-patch', sequence('default', 'bump-patch', /*'update',*/ 'publish'));
     gulp.task('deploy-minor', sequence('default', 'bump-minor', /*'update',*/ 'publish'));
-    gulp.task('deploy-major', sequence('default', 'bump-patch', /*'update',*/ 'publish'));
+    gulp.task('deploy-major', sequence('default', 'bump-major', /*'update',*/ 'publish'));
 
 })();
