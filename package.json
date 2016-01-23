@@ -1,6 +1,6 @@
 {
   "name": "angular-object-diff",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "An Angular JS plugin to compare and show object differences.",
   "main": "angular-object-diff.js",
   "directories": {

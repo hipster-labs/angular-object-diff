@@ -1,6 +1,6 @@
 {
   "name": "angular-object-diff",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "main": [
     "./dist/angular-object-diff.js",
     "./dist/angular-object-diff.css"
