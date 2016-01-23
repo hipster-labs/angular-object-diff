@@ -12,7 +12,7 @@
   "author": "Deepu K Sasidharan <d4udts@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/deepu105/angular-object-diff.git"
+    "url": "git://github.com/hipster-labs/angular-object-diff.git"
   },
   "license": "MIT",
   "devDependencies": {
