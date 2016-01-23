@@ -7,13 +7,14 @@
         .filter('toJsonView', toJsonViewFilter)
         .filter('toJsonDiffView', toJsonDiffViewFilter)
         .filter('objToJsonView', objToJsonViewFilter);
-
+    
+    objectDiff.$inject = ['$sce'];
     toJsonViewFilter.$inject = ['ObjectDiff'];
     toJsonDiffViewFilter.$inject = ['ObjectDiff'];
     objToJsonViewFilter.$inject = ['ObjectDiff'];
 
     /* service implementation */
-    function objectDiff() {
+    function objectDiff($sce) {
 
         var openChar = '{',
             closeChar = '}',
@@ -144,7 +145,7 @@
                 properties.push(formatChange(key, diff[key], shallow));
             }
 
-            return '<span>' + openChar + '</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>' + openChar + '</span>';
+            return $sce.trustAsHtml('<span>' + openChar + '</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>' + openChar + '</span>');
 
         }
 
@@ -155,7 +156,7 @@
          * @param shallow
          */
         function formatObjToJsonXMLString(obj, shallow) {
-            return inspect(obj, shallow);
+            return $sce.trustAsHtml(inspect(obj, shallow));
         }
 
         /**
@@ -179,7 +180,7 @@
                     properties.push(formatChange(key, diff[key], shallow, true));
             }
 
-            return '<span>' + openChar + '</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>' + closeChar + '</span>';
+            return $sce.trustAsHtml('<span>' + openChar + '</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>' + closeChar + '</span>');
 
         }
 
