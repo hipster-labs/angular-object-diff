@@ -1,7 +1,7 @@
 # angular-diff
 An Angular JS plugin to compare and show object differences in JSON format. [Demo](http://hipster-labs.github.io/angular-object-diff/)
 
-
+![Screenshot](/screenshot.png)
 # Installation
 
 with bower
@@ -23,18 +23,28 @@ npm i angular-object-diff
 
 
 `setOpenChar`: set the opening character for the view, default is `{`
+
 `setCloseChar`: set the closing character for the view, default is `}`
+
 `diff`: compare and build all the difference of two objects including prototype properties
+
 `diffOwnProperties`: compare and build the difference of two objects taking only its own properties into account
+
 `toJsonView`: format a diff object to a full JSON formatted object view
+
 `toJsonDiffView`: format a diff object to a JSON formatted view with only changes
+
 `objToJsonView`: format any javascript object to a JSON formatted view
+
 
 # Available filters
 
 `toJsonView`: format a diff object to a full JSON formatted object view
+
 `toJsonDiffView`: format a diff object to a JSON formatted view with only changes
+
 `objToJsonView`: format any javascript object to a JSON formatted view
+
 
 # Usage
 
