@@ -114,7 +114,7 @@
                 if (err) return cb(err);
                 git.push('origin', 'gh-pages', function (err) {
                     if (err) return cb(err);
-                    cb();
+                    git.checkout('master', cb);
                 });
             });
         });
