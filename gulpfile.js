@@ -99,7 +99,21 @@
                 if (err) return cb(err);
                 git.push('origin', 'master', {
                     args: '--tags'
-                }, cb);
+                }, function(err){
+                    if (err) return cb(err);
+                    git.checkout('gh-pages', function (err) {
+                        if (err) return cb(err);
+                        git.reset('master', {
+                            args: '--hard'
+                        }, function (err) {
+                            if (err) return cb(err);
+                            git.push('origin', 'gh-pages', function (err) {
+                                if (err) return cb(err);
+                                git.checkout('master', cb);
+                            });
+                        });
+                    });
+                });
             });
         });
     });
@@ -147,7 +161,7 @@
     gulp.task('default', sequence('check', ['less', 'js'], 'build'));
     gulp.task('test', sequence('unit' /*, 'integration'*/ ));
     gulp.task('check', sequence(['lint' /*, 'style'*/ ], 'test'));
-    gulp.task('publish', sequence(['git-commit', 'git-push', 'git-demo', 'npm']));
+    gulp.task('publish', sequence(['git-commit', 'git-push', 'npm']));
     gulp.task('deploy-patch', sequence('default', 'bump-patch', /*'update',*/ 'publish'));
     gulp.task('deploy-minor', sequence('default', 'bump-minor', /*'update',*/ 'publish'));
     gulp.task('deploy-major', sequence('default', 'bump-major', /*'update',*/ 'publish'));
