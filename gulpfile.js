@@ -119,7 +119,7 @@
     });
 
     gulp.task('git-demo', function (cb) {
-        var v = version();
+        var v = 'v' + version();
         git.checkout('gh-pages', function (err) {
             if (err) return cb(err);
             git.reset('master', {
