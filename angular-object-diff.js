@@ -7,7 +7,7 @@
         .filter('toJsonView', toJsonViewFilter)
         .filter('toJsonDiffView', toJsonDiffViewFilter)
         .filter('objToJsonView', objToJsonViewFilter);
-    
+
     objectDiff.$inject = ['$sce'];
     toJsonViewFilter.$inject = ['ObjectDiff'];
     toJsonDiffViewFilter.$inject = ['ObjectDiff'];
@@ -65,12 +65,12 @@
             var equal = true;
 
             for (var key in a) {
-                if ((!isOwn && key in b) || (isOwn && b.hasOwnProperty(key))) {
+                if ((!isOwn && key in b) || (isOwn && typeof b != 'undefined' && b.hasOwnProperty(key))) {
                     if (a[key] === b[key]) {
                         diffValue[key] = equalObj(a[key]);
                     } else {
                         if (!shallow && isValidAttr(a[key], b[key])) {
-                            var valueDiff = diff(a[key], b[key], isOwn);
+                            var valueDiff = diff(a[key], b[key], shallow, isOwn);
                             if (valueDiff.changed == 'equal') {
                                 diffValue[key] = equalObj(a[key]);
                             } else {
@@ -96,7 +96,7 @@
             }
 
             for (key in b) {
-                if ((!isOwn && !(key in a)) || (isOwn && !a.hasOwnProperty(key))) {
+                if ((!isOwn && !(key in a)) || (isOwn && typeof a != 'undefined' && !a.hasOwnProperty(key))) {
                     equal = false;
                     diffValue[key] = {
                         changed: 'added',
@@ -123,8 +123,8 @@
          * @return {Object}
          * @param deep
          */
-        function diffOwnProperties(a, b, deep) {
-            return diff(a, b, deep, true);
+        function diffOwnProperties(a, b, shallow) {
+            return diff(a, b, shallow, true);
         }
 
         /**
@@ -138,14 +138,14 @@
 
             var diff = changes.value;
             if (changes.changed == 'equal') {
-                return inspect(diff, shallow);
+                return $sce.trustAsHtml(inspect(diff, shallow));
             }
 
             for (var key in diff) {
                 properties.push(formatChange(key, diff[key], shallow));
             }
 
-            return $sce.trustAsHtml('<span>' + openChar + '</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>' + openChar + '</span>');
+            return $sce.trustAsHtml('<span>' + openChar + '</span>\n<div class="diff-level">' + properties.join('<span>,</span>\n') + '\n</div><span>' + closeChar + '</span>');
 
         }
 
