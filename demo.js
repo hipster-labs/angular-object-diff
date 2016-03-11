@@ -16,7 +16,8 @@
     function DemoController($scope, ObjectDiff) {
         $scope.objectOne = "{\n" +
             "   a: {\n" +
-            "     b: 1\n" +
+            "     b: 1,\n" +
+            "     c: [1, 2]\n" +
             "   },\n" +
             "   \"2b\": {\n" +
             "     foo: 'bar'\n" +
@@ -24,7 +25,8 @@
             " }";
         $scope.objectTwo = "{\n" +
             "   a: { \n" +
-            "     b: 2\n" +
+            "     b: 2,\n" +
+            "     c: [1, 2, 3]\n" +
             "   },\n" +
             "   x: 1\n" +
             " }";
@@ -34,16 +36,17 @@
             var objectOne, objectTwo, diff;
             try {
                 $scope.errorA = false;
-                objectOne = eval('(' + $scope.objectOne + ')'); //JSON.parse($scope.objectOne); 
+                objectOne = eval('(' + $scope.objectOne + ')'); //JSON.parse($scope.objectOne);
             } catch (err) {
                 $scope.errorA = true;
             }
             try {
                 $scope.errorB = false;
-                objectTwo = eval('(' + $scope.objectTwo + ')'); //JSON.parse($scope.objectTwo); 
+                objectTwo = eval('(' + $scope.objectTwo + ')'); //JSON.parse($scope.objectTwo);
             } catch (err) {
                 $scope.errorB = true;
             }
+
             // you can directly diff your objects if they are not string
             diff = ObjectDiff.diffOwnProperties(objectOne, objectTwo);
 
